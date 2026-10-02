@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Affin shifr</title>
+<style>
+:root{--bg:#f6f7f9;--card:#fff;--text:#1b1f24;--muted:#5d6672;--line:#d5d9df;--acc:#2f6fed;--err:#c62828;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#14171b;--card:#1d2127;--text:#e8eaed;--muted:#9aa3ad;--line:#343a42;--acc:#6b9bff;--err:#ff8a80}}
+:root[data-theme="dark"]{--bg:#14171b;--card:#1d2127;--text:#e8eaed;--muted:#9aa3ad;--line:#343a42;--acc:#6b9bff;--err:#ff8a80}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;line-height:1.5}
+main{max-width:560px;margin:0 auto;padding:20px 16px}
+h1{font-size:1.4rem;margin:0 0 4px}
+p.sub{color:var(--muted);margin:0 0 16px;font-size:.95rem}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px;margin-bottom:16px}
+h2{font-size:1.05rem;margin:0 0 12px}
+label{display:block;font-size:.85rem;color:var(--muted);margin:10px 0 4px}
+textarea,input,select{width:100%;box-sizing:border-box;padding:10px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--text);font:inherit}
+textarea{min-height:80px;resize:vertical}
+.row{display:flex;gap:10px}.row>div{flex:1}
+button{margin-top:12px;padding:10px 16px;border:0;border-radius:8px;background:var(--acc);color:#fff;font:inherit;font-weight:600;cursor:pointer}
+.out{margin-top:12px;padding:10px;border-radius:8px;background:var(--bg);border:1px dashed var(--line);min-height:1.5em;word-break:break-word;font-family:ui-monospace,Menlo,monospace}
+.err{color:var(--err);font-size:.9rem;margin-top:8px}
+</style>
+</head>
+<body>
+<main>
+<h1>Affin shifr</h1>
+<p class="sub">Inglizcha harflar (A–Z) uchun. E(x) = (a·x + b) mod 26</p>
+
+<div class="card">
+<h2>Shifrlash</h2>
+<label for="m1">Matn</label>
+<textarea id="m1" placeholder="HELLO WORLD"></textarea>
+<div class="row">
+<div><label for="a1">a</label><select id="a1"></select></div>
+<div><label for="b1">b (0–25)</label><input id="b1" type="number" min="0" max="25" value="8"></div>
+</div>
+<button onclick="ishla('enc')">Shifrlash</button>
+<div class="err" id="e1"></div>
+<div class="out" id="o1"></div>
+</div>
+
+<div class="card">
+<h2>Deshifrlash</h2>
+<label for="m2">Shifrlangan matn</label>
+<textarea id="m2" placeholder="RCLLA OAPLX"></textarea>
+<div class="row">
+<div><label for="a2">a</label><select id="a2"></select></div>
+<div><label for="b2">b (0–25)</label><input id="b2" type="number" min="0" max="25" value="8"></div>
+</div>
+<button onclick="ishla('dec')">Deshifrlash</button>
+<div class="err" id="e2"></div>
+<div class="out" id="o2"></div>
+</div>
+</main>
+
+<script>
+var ALIFBO="ABCDEFGHIJKLMNOPQRSTUVWXYZ",M=26,YAROQLI=[1,3,5,7,9,11,15,17,19,21,23,25];
+["a1","a2"].forEach(function(id){
+  var s=document.getElementById(id);
+  YAROQLI.forEach(function(v){var o=document.createElement("option");o.value=v;o.textContent=v;s.appendChild(o);});
+  s.value=5;
+});
+function teskari(a){for(var x=1;x<M;x++){if((a*x)%M===1)return x;}}
+function ishla(rejim){
+  var n=rejim==="enc"?"1":"2";
+  var matn=document.getElementById("m"+n).value.toUpperCase();
+  var a=parseInt(document.getElementById("a"+n).value,10);
+  var b=parseInt(document.getElementById("b"+n).value,10);
+  var xato=document.getElementById("e"+n),chiqish=document.getElementById("o"+n);
+  xato.textContent="";chiqish.textContent="";
+  if(isNaN(b)||b<0||b>25){xato.textContent="b 0 dan 25 gacha son bo'lishi kerak.";return;}
+  var at=teskari(a),natija="";
+  for(var i=0;i<matn.length;i++){
+    var h=matn[i],p=ALIFBO.indexOf(h);
+    if(p===-1){natija+=h;continue;}
+    var r=rejim==="enc"?(a*p+b)%M:(at*(p-b)%M+M)%M;
+    natija+=ALIFBO[r];
+  }
+  chiqish.textContent=natija;
+}
+</script>
+</body>
+</html>
